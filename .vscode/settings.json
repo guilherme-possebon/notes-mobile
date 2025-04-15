@@ -1,0 +1,11 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": false,
+  "editor.wordWrap": "off",
+  "files.refactoring.autoSave": false,
+  "files.autoSave": "onWindowChange",
+  "editor.fontFamily": "'Fira Code'",
+  "editor.formatOnSaveMode": "file",
+  "workbench.editor.labelFormat": "default"
+}
