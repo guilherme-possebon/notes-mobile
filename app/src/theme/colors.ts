@@ -1,7 +1,6 @@
-// theme/Colors.ts
-
-export const colors = {
+const colors = {
   text: "#EDE7F6",
+  placeholder: "#A29EA8",
   background: "#121212",
   primary: "#9C27B0",
   secondary: "#B388FF",
@@ -13,3 +12,5 @@ export const colors = {
   danger: "#D32F2F",
   divider: "#512DA8",
 };
+
+export default colors;

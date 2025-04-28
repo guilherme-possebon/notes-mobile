@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
-import { ThemedSafeAreaView } from "../src/components/ThemedSafeAreaView";
-import { ThemedText } from "../src/components/ThemedText";
+import ThemedSafeAreaView from "./src/components/ThemedSafeAreaView";
+import ThemedText from "./src/components/ThemedText";
 
 const daysOfWeek = [
   "Domingo",

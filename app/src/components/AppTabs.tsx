@@ -1,0 +1,242 @@
+import React, { useRef } from "react";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Dimensions,
+  Animated,
+} from "react-native";
+import { Tabs } from "expo-router";
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import colors from "../theme/colors";
+import Icon from "./Icon";
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
+interface IconProps {
+  name: string;
+  size: number;
+  color: string;
+}
+
+interface TabItemProps {
+  label: string;
+  isFocused: boolean;
+  onPress: () => void;
+  icon: React.ReactNode;
+}
+
+interface TabConfig {
+  name: string;
+  title: string;
+  iconName: string;
+}
+
+const TAB_WIDTH = SCREEN_WIDTH / 4;
+
+const TabItem = ({ label, isFocused, onPress, icon }: TabItemProps) => {
+  // Animation for the focused indicator (scale and fade)
+  const dotScale = useRef(new Animated.Value(isFocused ? 1 : 0)).current;
+  const dotOpacity = useRef(new Animated.Value(isFocused ? 1 : 0)).current;
+
+  // Animation for press effect (icon and label scale)
+  const pressScale = useRef(new Animated.Value(1)).current;
+
+  // Animate the dot when isFocused changes
+  React.useEffect(() => {
+    Animated.parallel([
+      Animated.spring(dotScale, {
+        toValue: isFocused ? 1 : 0,
+        speed: 20,
+        useNativeDriver: true,
+      }),
+      Animated.timing(dotOpacity, {
+        toValue: isFocused ? 1 : 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [isFocused]);
+
+  // Handle press animation
+  const handlePressIn = () => {
+    Animated.spring(pressScale, {
+      toValue: 0.95,
+      speed: 20,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(pressScale, {
+      toValue: 1,
+      speed: 20,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      style={styles.tabItem}
+      accessibilityLabel={label}
+      accessibilityHint={`Navigate to ${label} tab`}
+      accessibilityRole="button"
+      accessibilityState={{ selected: isFocused }}
+    >
+      <Animated.View
+        style={[styles.tabContent, { transform: [{ scale: pressScale }] }]}
+      >
+        {/* Focused indicator dot */}
+        <Animated.View
+          style={[
+            styles.focusedIndicator,
+            {
+              backgroundColor: colors.primary,
+              transform: [{ scale: dotScale }],
+              opacity: dotOpacity,
+            },
+          ]}
+        />
+        {icon}
+        <Text
+          style={[
+            styles.tabLabel,
+            {
+              color: isFocused ? colors.primary : colors.text,
+              fontWeight: isFocused ? "bold" : "normal",
+            },
+          ]}
+        >
+          {label}
+        </Text>
+      </Animated.View>
+    </TouchableOpacity>
+  );
+};
+
+interface CustomTabBarProps extends BottomTabBarProps {
+  tabs: TabConfig[];
+}
+
+const CustomTabBar = ({ state, navigation, tabs }: CustomTabBarProps) => {
+  return (
+    <View style={styles.tabBar}>
+      {/* Top border with rounded corners */}
+      <View style={[styles.topBorder, { backgroundColor: colors.primary }]} />
+      <View style={styles.tabContainer}>
+        {tabs.map((tab, index) => {
+          const route = state.routes.find((r) => r.name === tab.name);
+          const isFocused = route
+            ? state.index === state.routes.indexOf(route)
+            : false;
+
+          const onPress = () => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route?.key || tab.name,
+              canPreventDefault: true,
+            });
+
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(tab.name);
+            }
+          };
+
+          const icon = (
+            <Icon
+              name={tab.iconName}
+              size={24}
+              color={isFocused ? colors.primary : colors.text}
+            />
+          );
+
+          return (
+            <TabItem
+              key={tab.name}
+              label={tab.title}
+              isFocused={isFocused}
+              onPress={onPress}
+              icon={icon}
+            />
+          );
+        })}
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  tabBar: {
+    backgroundColor: colors.background, // #121212
+    height: 70,
+    borderTopWidth: 0,
+    elevation: 4,
+  },
+  topBorder: {
+    height: 4,
+    width: "100%",
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+  },
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    height: 66,
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  tabContent: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  focusedIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginBottom: 4,
+  },
+  tabLabel: {
+    fontSize: 12,
+    marginTop: 4,
+  },
+});
+
+interface AppTabsProps {
+  tabs: TabConfig[];
+  initialRouteName?: string;
+}
+
+export default function AppTabs({ tabs, initialRouteName }: AppTabsProps) {
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        headerStyle: { backgroundColor: colors.background },
+        headerTintColor: colors.text,
+      }}
+      initialRouteName={initialRouteName || tabs[0]?.name}
+      tabBar={(props) => <CustomTabBar {...props} tabs={tabs} />}
+    >
+      {tabs.map((tab) => (
+        <Tabs.Screen
+          key={tab.name}
+          name={tab.name}
+          options={{
+            title: tab.title,
+            tabBarIcon: ({ color }: { color: string }) => (
+              <Icon name={tab.iconName} size={24} color={color} />
+            ),
+          }}
+        />
+      ))}
+    </Tabs>
+  );
+}

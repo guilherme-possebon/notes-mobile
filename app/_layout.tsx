@@ -1,38 +1,36 @@
-import { Tabs } from "expo-router";
-import { colors } from "../src/theme/colors";
-import { Icon } from "../src/components/Icon";
+import React from "react";
+import Loading from "./src/components/Loading";
+import { LoadingProvider, useLoading } from "./src/context/LoadingContext";
+import AppTabs from "./src/components/AppTabs";
+import ThemedSafeAreaView from "./src/components/ThemedSafeAreaView";
+import { AlertNotificationRoot } from "react-native-alert-notification";
+
+const LayoutContent = () => {
+  const { isLoading } = useLoading();
+  const tabs = [
+    {
+      name: "create",
+      title: "Criar",
+      iconName: "pencil-square-o",
+    },
+    { name: "index", title: "Semana", iconName: "home" },
+    { name: "weeks", title: "Mês", iconName: "calendar" },
+  ];
+
+  return (
+    <ThemedSafeAreaView>
+      <AppTabs tabs={tabs} initialRouteName="index" />
+      {isLoading && <Loading />}
+    </ThemedSafeAreaView>
+  );
+};
 
 export default function Layout() {
   return (
-    <Tabs
-      initialRouteName="today"
-      screenOptions={{
-        headerShown: false,
-        headerStyle: { backgroundColor: colors.background },
-        headerTintColor: colors.text,
-        tabBarActiveTintColor: colors.primary,
-        tabBarStyle: { backgroundColor: colors.background },
-      }}
-    >
-      <Tabs.Screen
-        name="today"
-        options={{
-          title: "Today",
-          tabBarIcon: ({ color }) => (
-            <Icon name="home" size={24} color={color} />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="weeks"
-        options={{
-          title: "Weeks",
-          tabBarIcon: ({ color }) => (
-            <Icon name="list" size={24} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+    <LoadingProvider>
+      <AlertNotificationRoot>
+        <LayoutContent />
+      </AlertNotificationRoot>
+    </LoadingProvider>
   );
 }
