@@ -1,58 +1,151 @@
-import React, { useState } from "react";
-import ThemedView from "./ThemedView";
-import { StyleSheet, TextInput, TextInputProps } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+  View,
+} from "react-native";
 import colors from "../theme/colors";
+import ThemedText from "./ThemedText";
+import Icon from "./Icon";
+import ThemedView from "./ThemedView";
 
 interface ThemedInputProps extends TextInputProps {
   placeholder: string;
   value: string;
   onChangeText: (text: string) => void;
   isMultiline?: boolean;
+  showValidation?: boolean;
 }
 
-export default function ThemedInput({
-  placeholder,
-  value,
-  onChangeText,
-  isMultiline = false,
-  ...rest
-}: ThemedInputProps) {
-  const [inputHeight, setInputHeight] = useState(60);
-  const MAX_HEIGHT = 200;
+const ThemedInput = React.forwardRef<TextInput, ThemedInputProps>(
+  (
+    {
+      placeholder,
+      value,
+      onChangeText,
+      isMultiline = false,
+      showValidation = false,
+      ...rest
+    }: ThemedInputProps,
+    ref
+  ) => {
+    const [inputHeight, setInputHeight] = useState(60);
+    const [isFocused, setIsFocused] = useState(false);
+    const errorOpacity = useRef(new Animated.Value(0)).current;
+    const animatedLabel = useRef(new Animated.Value(value ? 1 : 0)).current;
+    const MAX_HEIGHT = 200;
 
-  return (
-    <ThemedView style={styles.container}>
-      <TextInput
-        style={[
-          styles.inputText,
-          { height: Math.min(Math.max(60, inputHeight), MAX_HEIGHT) },
-        ]}
-        onChangeText={onChangeText}
-        value={value}
-        placeholder={placeholder}
-        placeholderTextColor={colors.placeholder}
-        multiline={isMultiline}
-        scrollEnabled={isMultiline}
-        onContentSizeChange={(e) => {
-          setInputHeight(e.nativeEvent.contentSize.height);
-        }}
-        {...rest}
-      />
-    </ThemedView>
-  );
-}
+    const isInvalid = showValidation && value.trim().length === 0;
+
+    useEffect(() => {
+      Animated.timing(animatedLabel, {
+        toValue: isFocused || value ? 1 : 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
+    }, [isFocused, value]);
+
+    const labelStyle = {
+      position: "absolute" as const,
+      left: 16,
+      top: animatedLabel.interpolate({
+        inputRange: [0, 1],
+        outputRange: [18, -8],
+      }),
+      fontSize: animatedLabel.interpolate({
+        inputRange: [0, 1],
+        outputRange: [16, 12],
+      }),
+      color: isInvalid ? colors.error : colors.placeholder,
+      backgroundColor: colors.background,
+      paddingHorizontal: 4,
+      zIndex: 2,
+    };
+
+    useEffect(() => {
+      Animated.timing(errorOpacity, {
+        toValue: isInvalid ? 1 : 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }, [isInvalid]);
+
+    return (
+      <View style={styles.wrapper}>
+        <View style={[styles.container]}>
+          <Animated.Text style={labelStyle}>
+            <ThemedText
+              type={value || isFocused ? "smallSemiBold" : "defaultSemiBold"}
+              style={[{ color: isInvalid ? colors.error : colors.text }]}
+            >
+              {placeholder}
+            </ThemedText>
+          </Animated.Text>
+
+          <TextInput
+            ref={ref}
+            style={[
+              styles.inputText,
+              {
+                height: Math.min(Math.max(60, inputHeight), MAX_HEIGHT),
+                borderColor: isInvalid ? colors.error : colors.border,
+              },
+            ]}
+            value={value}
+            onChangeText={onChangeText}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            multiline={isMultiline}
+            scrollEnabled={isMultiline}
+            onContentSizeChange={(e) => {
+              setInputHeight(e.nativeEvent.contentSize.height);
+            }}
+            {...rest}
+          />
+          <Animated.View style={{ opacity: errorOpacity }}>
+            <ThemedView style={[styles.warnText]}>
+              <Icon name={"warning"} color={colors.error} size={12} />
+              <ThemedText type="smallSemiBold" style={{ color: colors.error }}>
+                Este campo é obrigatório
+              </ThemedText>
+            </ThemedView>
+          </Animated.View>
+        </View>
+      </View>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
+  wrapper: {
+    marginVertical: 12,
+  },
   container: {
-    marginVertical: 8,
+    position: "relative",
+    justifyContent: "center",
   },
   inputText: {
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 8,
-    padding: 16,
-    color: colors.text,
+    paddingTop: 20,
+    paddingBottom: 8,
+    paddingHorizontal: 16,
     fontSize: 16,
+    color: colors.text,
+    backgroundColor: colors.background,
     textAlignVertical: "top",
   },
+  warnText: {
+    display: "flex",
+    gap: 8,
+    color: colors.error,
+    flexDirection: "row",
+    alignItems: "center",
+    marginLeft: 4,
+    marginTop: 4,
+  },
 });
+
+export default ThemedInput;

@@ -1,5 +1,10 @@
-import React from "react";
-import { TouchableOpacity, StyleSheet, ViewStyle } from "react-native";
+import React, { useEffect, useRef } from "react";
+import {
+  TouchableOpacity,
+  StyleSheet,
+  ViewStyle,
+  Animated,
+} from "react-native";
 import ThemedText, { ThemedTextProps } from "./ThemedText";
 import ThemedView from "./ThemedView";
 import colors from "../theme/colors";
@@ -10,8 +15,10 @@ interface TabItemProps {
   icon?: React.ReactNode;
   textType?: ThemedTextProps["type"];
   containerStyle?: ViewStyle;
-  contentStyle?: ViewStyle;
+  contentStyle?: string;
+  borderStyle?: string;
   accessibilityHint?: string;
+  showValidation?: boolean;
 }
 
 export default function ThemedTouchableOpacity({
@@ -21,20 +28,31 @@ export default function ThemedTouchableOpacity({
   textType = "default",
   containerStyle,
   contentStyle,
+  borderStyle,
+  showValidation = false,
   accessibilityHint = `Press to ${label.toLowerCase()}`,
 }: TabItemProps) {
+  const errorOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(errorOpacity, {
+      toValue: showValidation ? 1 : 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [showValidation]);
   return (
     <TouchableOpacity
-      style={[styles.container, containerStyle]}
+      style={[styles.container, containerStyle, { borderColor: borderStyle }]}
       onPress={onPress}
       activeOpacity={0.7}
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityHint={accessibilityHint}
     >
-      <ThemedView style={[styles.content, contentStyle]}>
-        {icon}
-        <ThemedText type={textType} style={styles.label}>
+      <ThemedView style={[styles.content]}>
+        <ThemedText>{icon}</ThemedText>
+        <ThemedText type={textType} style={{ color: contentStyle }}>
           {label}
         </ThemedText>
       </ThemedView>
@@ -58,6 +76,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   label: {
-    color: colors.primary,
+    color: colors.text,
   },
 });

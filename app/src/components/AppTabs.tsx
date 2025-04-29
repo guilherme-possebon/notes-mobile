@@ -36,14 +36,11 @@ interface TabConfig {
 const TAB_WIDTH = SCREEN_WIDTH / 4;
 
 const TabItem = ({ label, isFocused, onPress, icon }: TabItemProps) => {
-  // Animation for the focused indicator (scale and fade)
   const dotScale = useRef(new Animated.Value(isFocused ? 1 : 0)).current;
   const dotOpacity = useRef(new Animated.Value(isFocused ? 1 : 0)).current;
 
-  // Animation for press effect (icon and label scale)
   const pressScale = useRef(new Animated.Value(1)).current;
 
-  // Animate the dot when isFocused changes
   React.useEffect(() => {
     Animated.parallel([
       Animated.spring(dotScale, {
@@ -59,7 +56,6 @@ const TabItem = ({ label, isFocused, onPress, icon }: TabItemProps) => {
     ]).start();
   }, [isFocused]);
 
-  // Handle press animation
   const handlePressIn = () => {
     Animated.spring(pressScale, {
       toValue: 0.95,
@@ -90,12 +86,11 @@ const TabItem = ({ label, isFocused, onPress, icon }: TabItemProps) => {
       <Animated.View
         style={[styles.tabContent, { transform: [{ scale: pressScale }] }]}
       >
-        {/* Focused indicator dot */}
         <Animated.View
           style={[
             styles.focusedIndicator,
             {
-              backgroundColor: colors.primary,
+              backgroundColor: colors.text,
               transform: [{ scale: dotScale }],
               opacity: dotOpacity,
             },
@@ -106,7 +101,7 @@ const TabItem = ({ label, isFocused, onPress, icon }: TabItemProps) => {
           style={[
             styles.tabLabel,
             {
-              color: isFocused ? colors.primary : colors.text,
+              color: isFocused ? colors.text : colors.primary,
               fontWeight: isFocused ? "bold" : "normal",
             },
           ]}
@@ -125,7 +120,6 @@ interface CustomTabBarProps extends BottomTabBarProps {
 const CustomTabBar = ({ state, navigation, tabs }: CustomTabBarProps) => {
   return (
     <View style={styles.tabBar}>
-      {/* Top border with rounded corners */}
       <View style={[styles.topBorder, { backgroundColor: colors.primary }]} />
       <View style={styles.tabContainer}>
         {tabs.map((tab, index) => {
@@ -150,7 +144,7 @@ const CustomTabBar = ({ state, navigation, tabs }: CustomTabBarProps) => {
             <Icon
               name={tab.iconName}
               size={24}
-              color={isFocused ? colors.primary : colors.text}
+              color={isFocused ? colors.text : colors.primary}
             />
           );
 
@@ -171,7 +165,7 @@ const CustomTabBar = ({ state, navigation, tabs }: CustomTabBarProps) => {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: colors.background, // #121212
+    backgroundColor: colors.background,
     height: 70,
     borderTopWidth: 0,
     elevation: 4,

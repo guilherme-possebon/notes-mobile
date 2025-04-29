@@ -28,7 +28,7 @@ export default function Loading({ size = 100, text = "Loading..." }) {
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(18, 18, 18, 0.9)",
+    backgroundColor: colors.background,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1000,
