@@ -13,7 +13,7 @@ import ThemedTouchableOpacity from "./src/components/ThemedTouchableOpacity";
 import Icon from "./src/components/Icon";
 import colors from "./src/theme/colors";
 
-const API_URL = "http://192.168.3.81:3000";
+const API_URL = "https://project-api-woad.vercel.app";
 
 interface GroupedNote {
   day: string;

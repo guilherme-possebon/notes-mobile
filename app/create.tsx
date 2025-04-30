@@ -11,7 +11,7 @@ import axios from "axios";
 import { useLoading } from "./src/context/LoadingContext";
 import { ALERT_TYPE, Dialog, Toast } from "react-native-alert-notification";
 
-var API_URL = "http://192.168.3.81:3000";
+var API_URL = "https://project-api-woad.vercel.app";
 
 export default function Create() {
   const { showLoading, hideLoading, setReload, reload } = useLoading();
