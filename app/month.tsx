@@ -5,13 +5,14 @@ import axios from "axios";
 import ThemedSafeAreaView from "./src/components/ThemedSafeAreaView";
 import ThemedText from "./src/components/ThemedText";
 import { IWeeks } from "../types/weeks";
-import colors from "./src/theme/colors";
+import { useTheme } from "./src/context/ThemeContext";
 
 const API_URL = "https://project-api-woad.vercel.app";
 
 export default function Month() {
   const [weeks, setWeeks] = useState<IWeeks[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const { colors } = useTheme();
 
   useEffect(() => {
     axios
@@ -34,14 +35,14 @@ export default function Month() {
   );
 
   return (
-    <ThemedSafeAreaView style={{ flex: 1, padding: 16 }}>
+    <ThemedSafeAreaView
+      style={{ flex: 1, padding: 16, backgroundColor: colors.background }}
+    >
       <StatusBar style="auto" />
-
       <FlatList
         data={weeks}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderWeek}
-        style={{ backgroundColor: colors.background }}
         ListEmptyComponent={() => (
           <ThemedText>
             {loading ? "Carregando semanas..." : "Nenhuma semana disponível."}

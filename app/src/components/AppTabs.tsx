@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { Tabs } from "expo-router";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import colors from "../theme/colors";
 import Icon from "./Icon";
+import { useTheme } from "../context/ThemeContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -36,6 +36,8 @@ interface TabConfig {
 const TAB_WIDTH = SCREEN_WIDTH / 4;
 
 const TabItem = ({ label, isFocused, onPress, icon }: TabItemProps) => {
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
   const dotScale = useRef(new Animated.Value(isFocused ? 1 : 0)).current;
   const dotOpacity = useRef(new Animated.Value(isFocused ? 1 : 0)).current;
 
@@ -118,6 +120,8 @@ interface CustomTabBarProps extends BottomTabBarProps {
 }
 
 const CustomTabBar = ({ state, navigation, tabs }: CustomTabBarProps) => {
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
   return (
     <View style={styles.tabBar}>
       <View style={[styles.topBorder, { backgroundColor: colors.primary }]} />
@@ -163,45 +167,48 @@ const CustomTabBar = ({ state, navigation, tabs }: CustomTabBarProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: colors.background,
-    height: 70,
-    borderTopWidth: 0,
-    elevation: 4,
-  },
-  topBorder: {
-    height: 4,
-    width: "100%",
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-  },
-  tabContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    height: 66,
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  tabContent: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  focusedIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginBottom: 4,
-  },
-  tabLabel: {
-    fontSize: 12,
-    marginTop: 4,
-  },
-});
+const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
+  StyleSheet.create({
+    tabBar: {
+      backgroundColor: colors.background,
+      height: 70,
+      borderTopWidth: 0,
+      elevation: 4,
+    },
+    topBorder: {
+      height: 4,
+      width: "100%",
+      borderTopLeftRadius: 8,
+      borderTopRightRadius: 8,
+      backgroundColor: colors.primary,
+    },
+    tabContainer: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      alignItems: "center",
+      height: 66,
+    },
+    tabItem: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    tabContent: {
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    focusedIndicator: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginBottom: 4,
+      backgroundColor: colors.text,
+    },
+    tabLabel: {
+      fontSize: 12,
+      marginTop: 4,
+    },
+  });
 
 interface AppTabsProps {
   tabs: TabConfig[];
@@ -209,6 +216,7 @@ interface AppTabsProps {
 }
 
 export default function AppTabs({ tabs, initialRouteName }: AppTabsProps) {
+  const { colors } = useTheme();
   return (
     <Tabs
       screenOptions={{

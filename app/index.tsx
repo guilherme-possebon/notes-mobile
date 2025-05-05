@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { StyleSheet, FlatList, Dimensions } from "react-native";
+import { StyleSheet, FlatList } from "react-native";
 import { router } from "expo-router";
 import { IWeek } from "../types/week";
 import { useLoading } from "./src/context/LoadingContext";
@@ -11,7 +11,7 @@ import ThemedText from "./src/components/ThemedText";
 import Details from "./src/components/Details";
 import ThemedTouchableOpacity from "./src/components/ThemedTouchableOpacity";
 import Icon from "./src/components/Icon";
-import colors from "./src/theme/colors";
+import { useTheme } from "./src/context/ThemeContext";
 
 const API_URL = "https://project-api-woad.vercel.app";
 
@@ -22,22 +22,9 @@ interface GroupedNote {
 
 export default function Week() {
   const [weekNote, setWeekNote] = useState({} as IWeek);
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
   const { showLoading, hideLoading, reload } = useLoading();
-
-  useEffect(() => {
-    showLoading();
-    async function fetchWeekNotes() {
-      const url = `${API_URL}/api/notes/week`;
-      try {
-        const response = await axios.get(url);
-        setWeekNote(response.data.week);
-      } catch (error) {
-        console.log("Error: ", error);
-      }
-      hideLoading();
-    }
-    fetchWeekNotes();
-  }, [reload]);
 
   const groupedNotes: GroupedNote[] =
     weekNote.notes?.reduce((acc, note) => {
@@ -79,67 +66,87 @@ export default function Week() {
     </ThemedView>
   );
 
+  useEffect(() => {
+    async function fetchWeekNotes() {
+      showLoading();
+      const url = `${API_URL}/api/notes/week`;
+      try {
+        const response = await axios.get(url);
+        setWeekNote(response.data.week);
+      } catch (error) {
+        console.log("Error: ", error);
+      }
+      hideLoading();
+    }
+    fetchWeekNotes();
+  }, [reload]);
+
   return (
     <ThemedSafeAreaView
-      style={{ paddingBottom: 64, backgroundColor: colors.background }}
+      style={{ paddingBottom: 64, backgroundColor: colors.background, flex: 1 }}
     >
-      <ThemedText type="title" style={[styles.title]}>
-        Semana Atual
-      </ThemedText>
       {weekNote.notes && groupedNotes.length > 0 ? (
-        <FlatList
-          data={groupedNotes}
-          renderItem={renderDay}
-          keyExtractor={(item) => item.day}
-          contentContainerStyle={styles.listContainer}
-        />
+        <>
+          <ThemedText type="title" style={[styles.title]}>
+            Semana Atual
+          </ThemedText>
+          <FlatList
+            data={groupedNotes}
+            renderItem={renderDay}
+            keyExtractor={(item) => item.day}
+            contentContainerStyle={styles.listContainer}
+          />
+        </>
       ) : (
         <ThemedView style={styles.emptyContainer}>
           <ThemedText type="title">Semana sem notas...</ThemedText>
           <ThemedText type="subtitle">Tente começar criando uma!</ThemedText>
           <ThemedTouchableOpacity
-            label="Criar nota"
-            accessibilityHint="Criar nota"
-            textType="subtitle"
-            icon={<Icon name="pencil" size={24} color={colors.primary} />}
             onPress={() => router.navigate("/create")}
-          />
+            borderStyle={colors.border}
+          >
+            <ThemedView style={{ flexDirection: "row", gap: 8 }}>
+              <Icon name="pencil" size={24} color={colors.text} />
+              <ThemedText type="subtitle">Criar nota</ThemedText>
+            </ThemedView>
+          </ThemedTouchableOpacity>
         </ThemedView>
       )}
     </ThemedSafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  title: {
-    textAlign: "center",
-    marginVertical: 16,
-  },
-  listContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-    gap: 16,
-  },
-  dayContainer: {
-    padding: 16,
-    borderRadius: 8,
-    borderColor: colors.divider,
-    borderWidth: 1,
-    shadowColor: colors.divider,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-  },
-  dayHeader: {
-    color: colors.text,
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 32,
-  },
-});
+const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
+  StyleSheet.create({
+    title: {
+      textAlign: "center",
+      marginVertical: 16,
+    },
+    listContainer: {
+      paddingHorizontal: 16,
+      paddingBottom: 16,
+      gap: 16,
+    },
+    dayContainer: {
+      padding: 16,
+      borderRadius: 8,
+      borderColor: colors.divider,
+      borderWidth: 1,
+      shadowColor: colors.divider,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+    },
+    dayHeader: {
+      color: colors.text,
+      fontSize: 24,
+      fontWeight: "bold",
+      marginBottom: 8,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      gap: 32,
+    },
+  });

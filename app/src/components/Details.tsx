@@ -11,17 +11,12 @@ import {
 import ThemedView from "./ThemedView";
 import ThemedText from "./ThemedText";
 import Icon from "./Icon";
-import colors from "../theme/colors";
 import { INote } from "../../../types/note";
-
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+import { useTheme } from "../context/ThemeContext";
 
 export default function Details({ title, note, created_at }: INote) {
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
   const [isVisible, setIsVisible] = useState(false);
   const rotation = useRef(new Animated.Value(0)).current;
 
@@ -69,38 +64,39 @@ export default function Details({ title, note, created_at }: INote) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: colors.background,
-    borderRadius: 16,
-    marginVertical: 8,
-    borderColor: colors.divider,
-    borderWidth: 1,
-    shadowColor: colors.divider,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  title: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: "600",
-    marginRight: 12,
-  },
-  details: {
-    marginTop: 12,
-    padding: 12,
-  },
-  note: {
-    color: colors.text,
-    fontSize: 14,
-    lineHeight: 20,
-  },
-});
+const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
+  StyleSheet.create({
+    container: {
+      padding: 16,
+      backgroundColor: colors.background,
+      borderRadius: 16,
+      marginVertical: 8,
+      borderColor: colors.divider,
+      borderWidth: 1,
+      shadowColor: colors.divider,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+      elevation: 4,
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    title: {
+      flex: 1,
+      fontSize: 18,
+      fontWeight: "600",
+      marginRight: 12,
+    },
+    details: {
+      marginTop: 12,
+      padding: 12,
+    },
+    note: {
+      color: colors.text,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+  });

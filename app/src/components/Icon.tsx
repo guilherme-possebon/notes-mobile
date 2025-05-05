@@ -1,5 +1,5 @@
 import { FontAwesome } from "@expo/vector-icons";
-import colors from "../theme/colors";
+import { useTheme } from "../context/ThemeContext";
 
 type TIcon = {
   name: string | any;
@@ -7,6 +7,8 @@ type TIcon = {
   size?: number;
 };
 
-export default function Icon({ name, color = colors.text, size = 40 }: TIcon) {
-  return <FontAwesome name={name} size={size} color={color} />;
+export default function Icon({ name, color, size = 40 }: TIcon) {
+  const { colors } = useTheme();
+  const iconColor = color || colors.text;
+  return <FontAwesome name={name} size={size} color={iconColor} />;
 }

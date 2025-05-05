@@ -6,10 +6,10 @@ import {
   TextInputProps,
   View,
 } from "react-native";
-import colors from "../theme/colors";
 import ThemedText from "./ThemedText";
 import Icon from "./Icon";
 import ThemedView from "./ThemedView";
+import { useTheme } from "../context/ThemeContext";
 
 interface ThemedInputProps extends TextInputProps {
   placeholder: string;
@@ -31,6 +31,8 @@ const ThemedInput = React.forwardRef<TextInput, ThemedInputProps>(
     }: ThemedInputProps,
     ref
   ) => {
+    const { colors } = useTheme();
+    const styles = getStyles(colors);
     const [inputHeight, setInputHeight] = useState(60);
     const [isFocused, setIsFocused] = useState(false);
     const errorOpacity = useRef(new Animated.Value(0)).current;
@@ -73,8 +75,8 @@ const ThemedInput = React.forwardRef<TextInput, ThemedInputProps>(
     }, [isInvalid]);
 
     return (
-      <View style={styles.wrapper}>
-        <View style={[styles.container]}>
+      <ThemedView>
+        <ThemedView style={[styles.container]}>
           <Animated.Text style={labelStyle}>
             <ThemedText
               type={value || isFocused ? "smallSemiBold" : "defaultSemiBold"}
@@ -112,40 +114,38 @@ const ThemedInput = React.forwardRef<TextInput, ThemedInputProps>(
               </ThemedText>
             </ThemedView>
           </Animated.View>
-        </View>
-      </View>
+        </ThemedView>
+      </ThemedView>
     );
   }
 );
 
-const styles = StyleSheet.create({
-  wrapper: {
-    marginVertical: 12,
-  },
-  container: {
-    position: "relative",
-    justifyContent: "center",
-  },
-  inputText: {
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingTop: 20,
-    paddingBottom: 8,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    color: colors.text,
-    backgroundColor: colors.background,
-    textAlignVertical: "top",
-  },
-  warnText: {
-    display: "flex",
-    gap: 8,
-    color: colors.error,
-    flexDirection: "row",
-    alignItems: "center",
-    marginLeft: 4,
-    marginTop: 4,
-  },
-});
+const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
+  StyleSheet.create({
+    container: {
+      position: "relative",
+      justifyContent: "center",
+    },
+    inputText: {
+      borderWidth: 1,
+      borderRadius: 8,
+      paddingTop: 20,
+      paddingBottom: 8,
+      paddingHorizontal: 16,
+      fontSize: 16,
+      color: colors.text,
+      backgroundColor: colors.background,
+      textAlignVertical: "top",
+    },
+    warnText: {
+      display: "flex",
+      gap: 8,
+      color: colors.error,
+      flexDirection: "row",
+      alignItems: "center",
+      marginLeft: 4,
+      marginTop: 4,
+    },
+  });
 
 export default ThemedInput;

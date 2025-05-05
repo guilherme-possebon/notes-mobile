@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import LottieView from "lottie-react-native";
-import colors from "../theme/colors";
 import LoadingAnimation from "../../../assets/animations/loading.json";
+import { useTheme } from "../context/ThemeContext";
 
 interface LoadingProps {
   size?: number;
@@ -10,6 +10,8 @@ interface LoadingProps {
 }
 
 export default function Loading({ size = 100, text = "Loading..." }) {
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
   return (
     <View style={styles.overlay}>
       <View style={styles.container}>
@@ -24,25 +26,25 @@ export default function Loading({ size = 100, text = "Loading..." }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.background,
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  },
-  container: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  animation: {
-    marginBottom: 10,
-  },
-  loadingText: {
-    color: colors.text,
-    fontSize: 16,
-    fontWeight: "500",
-  },
-});
+const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
+  StyleSheet.create({
+    overlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: colors.background,
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1000,
+    },
+    container: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    animation: {
+      marginBottom: 10,
+    },
+    loadingText: {
+      color: colors.text,
+      fontSize: 16,
+      fontWeight: "500",
+    },
+  });
