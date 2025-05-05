@@ -6,11 +6,17 @@ import ThemedSafeAreaView from "./src/components/ThemedSafeAreaView";
 import ThemedText from "./src/components/ThemedText";
 import { IWeeks } from "../types/weeks";
 import { useTheme } from "./src/context/ThemeContext";
+import ThemedView from "./src/components/ThemedView";
+import ThemedTouchableOpacity from "./src/components/ThemedTouchableOpacity";
+import { format } from "date-fns";
+import { IWeek } from "../types/week";
+import WeekModal from "./src/components/WeekModal";
 
 const API_URL = "https://project-api-woad.vercel.app";
 
 export default function Month() {
   const [weeks, setWeeks] = useState<IWeeks[]>([]);
+  const [week, setWeek] = useState<IWeek>({} as IWeek);
   const [loading, setLoading] = useState<boolean>(true);
   const { colors } = useTheme();
 
@@ -26,12 +32,43 @@ export default function Month() {
       .finally(() => setLoading(false));
   }, []);
 
+  async function getWeekById(id: number) {
+    axios
+      .get(`${API_URL}/api/notes/weeks/${id}`)
+      .then((response) => setWeek(response.data.week))
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
   const renderWeek = ({ item }: { item: IWeeks }) => (
-    <View style={{ marginBottom: 16 }}>
-      <ThemedText>ID: {item.id}</ThemedText>
-      <ThemedText>Início: {item.start_date}</ThemedText>
-      <ThemedText>Final: {item.end_date}</ThemedText>
-    </View>
+    <ThemedTouchableOpacity
+      onPress={() => getWeekById(item.id)}
+      borderStyle={colors.border}
+      containerStyle={{
+        paddingVertical: 16,
+        paddingHorizontal: 32,
+        borderRadius: 12,
+        backgroundColor: colors.background,
+        borderWidth: 1,
+        borderColor: colors.border,
+        marginBottom: 12,
+      }}
+    >
+      <ThemedView style={{ gap: 12 }}>
+        <ThemedText style={{ textAlign: "center" }}>
+          Semana: {item.id}
+        </ThemedText>
+        <ThemedView style={{ flexDirection: "row", gap: 12 }}>
+          <ThemedText>
+            Início: {format(new Date(item.start_date), "dd/MM/yyyy")}
+          </ThemedText>
+          <ThemedText>
+            Final: {format(new Date(item.end_date), "dd/MM/yyyy")}
+          </ThemedText>
+        </ThemedView>
+      </ThemedView>
+    </ThemedTouchableOpacity>
   );
 
   return (
@@ -49,6 +86,17 @@ export default function Month() {
           </ThemedText>
         )}
       />
+
+      {week && (
+        <WeekModal
+          id={week.id}
+          created_at={week.created_at}
+          updated_at={week.updated_at}
+          start_date={week.start_date}
+          end_date={week.end_date}
+          notes={week.notes}
+        />
+      )}
     </ThemedSafeAreaView>
   );
 }
