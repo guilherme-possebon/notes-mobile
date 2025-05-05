@@ -14,7 +14,7 @@ const LayoutContent = () => {
       iconName: "pencil-square-o",
     },
     { name: "index", title: "Semana", iconName: "home" },
-    { name: "weeks", title: "Mês", iconName: "calendar" },
+    { name: "month", title: "Mês", iconName: "calendar" },
   ];
 
   return (
