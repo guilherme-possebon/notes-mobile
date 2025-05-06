@@ -1,48 +1,82 @@
 import React from "react";
-import ThemedText from "./ThemedText";
 import { IWeek } from "../../../types/week";
 import { useTheme } from "../context/ThemeContext";
 import CurrentWeekFlatList from "./CurrentWeekFlatList";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, Modal, StyleSheet } from "react-native";
 import ThemedView from "./ThemedView";
+import Icon from "./Icon";
+import ThemedTouchableOpacity from "./ThemedTouchableOpacity";
+
+interface IWeekModal extends IWeek {
+  hideModal: () => void;
+  modalVisible: boolean;
+}
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-export default function WeekModal({ id, notes, start_date, end_date }: IWeek) {
+export default function WeekModal({
+  id,
+  notes,
+  start_date,
+  end_date,
+  hideModal,
+  modalVisible,
+}: IWeekModal) {
   const { colors } = useTheme();
   const styles = getStyles(colors);
 
   return (
     <>
-      <ThemedView style={[styles.modalContainer]}>
-        <ThemedView style={[styles.modal]}>
-          <ThemedText>{id}</ThemedText>
-          <CurrentWeekFlatList notes={notes} />
-          <ThemedText>{start_date}</ThemedText>
-          <ThemedText>{end_date}</ThemedText>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          hideModal();
+        }}
+      >
+        <ThemedView style={[styles.centeredView]}>
+          <ThemedView style={styles.modalView}>
+            <ThemedTouchableOpacity
+              containerStyle={styles.icon}
+              onPress={() => hideModal()}
+            >
+              <Icon name={"remove"} color={colors.text} size={24} />
+            </ThemedTouchableOpacity>
+            <CurrentWeekFlatList notes={notes} />
+          </ThemedView>
         </ThemedView>
-      </ThemedView>
+      </Modal>
     </>
   );
 }
 
 const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
   StyleSheet.create({
-    modalContainer: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      zIndex: 2,
-      width: SCREEN_WIDTH,
-      height: SCREEN_HEIGHT,
+    centeredView: {
+      flex: 1,
       justifyContent: "center",
       alignItems: "center",
     },
-    modal: {
-      width: SCREEN_WIDTH - 40,
-      height: SCREEN_HEIGHT - 70,
-      backgroundColor: colors.success,
-      marginBottom: 60,
+    modalView: {
+      backgroundColor: colors.background,
+      borderRadius: 16,
+      paddingTop: 52,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
+      width: SCREEN_WIDTH - 20,
+      height: SCREEN_HEIGHT,
+    },
+    icon: {
+      position: "absolute",
+      right: 0,
+      padding: 8,
     },
   });

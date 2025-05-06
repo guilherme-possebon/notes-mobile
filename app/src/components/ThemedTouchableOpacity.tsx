@@ -17,6 +17,7 @@ interface TabItemProps {
   containerStyle?: ViewStyle;
   borderStyle?: string;
   contentStyle?: ViewStyle;
+  isDisabled?: boolean;
 }
 
 export default function ThemedTouchableOpacity({
@@ -26,6 +27,7 @@ export default function ThemedTouchableOpacity({
   containerStyle,
   borderStyle,
   contentStyle,
+  isDisabled = false,
 }: TabItemProps) {
   const errorOpacity = useRef(new Animated.Value(0)).current;
   const { colors } = useTheme();
@@ -47,6 +49,7 @@ export default function ThemedTouchableOpacity({
       onPress={onPress}
       activeOpacity={0.7}
       accessibilityRole="button"
+      disabled={isDisabled}
     >
       <ThemedView style={[contentStyle ? contentStyle : styles.content]}>
         {children}

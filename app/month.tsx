@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { FlatList, View } from "react-native";
 import axios from "axios";
@@ -11,16 +11,30 @@ import ThemedTouchableOpacity from "./src/components/ThemedTouchableOpacity";
 import { format } from "date-fns";
 import { IWeek } from "../types/week";
 import WeekModal from "./src/components/WeekModal";
+import { useLoading } from "./src/context/LoadingContext";
 
 const API_URL = "https://project-api-woad.vercel.app";
 
 export default function Month() {
   const [weeks, setWeeks] = useState<IWeeks[]>([]);
   const [week, setWeek] = useState<IWeek>({} as IWeek);
-  const [loading, setLoading] = useState<boolean>(true);
-  const { colors } = useTheme();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const { showLoading, hideLoading } = useLoading();
 
+  function showModal() {
+    setModalVisible(true);
+    setIsDisabled(true);
+  }
+
+  function hideModal() {
+    setModalVisible(false);
+    setIsDisabled(false);
+  }
+
+  const { colors } = useTheme();
   useEffect(() => {
+    showLoading();
     axios
       .get(`${API_URL}/api/notes/weeks`)
       .then((response) => {
@@ -29,13 +43,18 @@ export default function Month() {
       .catch((error) => {
         console.error(error);
       })
-      .finally(() => setLoading(false));
+      .finally(() => hideLoading());
   }, []);
 
   async function getWeekById(id: number) {
+    showLoading();
     axios
       .get(`${API_URL}/api/notes/weeks/${id}`)
-      .then((response) => setWeek(response.data.week))
+      .then((response) => {
+        hideLoading();
+        setWeek(response.data.week);
+        showModal();
+      })
       .catch((error) => {
         console.error(error);
       });
@@ -54,6 +73,7 @@ export default function Month() {
         borderColor: colors.border,
         marginBottom: 12,
       }}
+      isDisabled={isDisabled}
     >
       <ThemedView style={{ gap: 12 }}>
         <ThemedText style={{ textAlign: "center" }}>
@@ -80,11 +100,6 @@ export default function Month() {
         data={weeks}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderWeek}
-        ListEmptyComponent={() => (
-          <ThemedText>
-            {loading ? "Carregando semanas..." : "Nenhuma semana disponível."}
-          </ThemedText>
-        )}
       />
 
       {week && (
@@ -95,6 +110,8 @@ export default function Month() {
           start_date={week.start_date}
           end_date={week.end_date}
           notes={week.notes}
+          modalVisible={modalVisible}
+          hideModal={() => hideModal()}
         />
       )}
     </ThemedSafeAreaView>

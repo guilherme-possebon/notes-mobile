@@ -42,7 +42,17 @@ export default function Details({ title, note, created_at }: INote) {
 
   return (
     <ThemedView style={styles.container}>
-      <TouchableOpacity onPress={toggleDetails} style={styles.header}>
+      <TouchableOpacity
+        onPress={toggleDetails}
+        style={[
+          styles.header,
+          {
+            borderBottomLeftRadius: isVisible ? 0 : 16,
+            borderBottomRightRadius: isVisible ? 0 : 16,
+            borderBottomWidth: isVisible ? StyleSheet.hairlineWidth : 1,
+          },
+        ]}
+      >
         <ThemedText type="subtitle" style={styles.title}>
           {title}
         </ThemedText>
@@ -67,22 +77,23 @@ export default function Details({ title, note, created_at }: INote) {
 const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
   StyleSheet.create({
     container: {
-      padding: 16,
       backgroundColor: colors.background,
-      borderRadius: 16,
       marginVertical: 8,
-      borderColor: colors.divider,
-      borderWidth: 1,
       shadowColor: colors.divider,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.3,
       shadowRadius: 4,
       elevation: 4,
+      borderRadius: 16,
     },
     header: {
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
+      borderColor: colors.border,
+      borderWidth: 1,
+      padding: 16,
+      borderRadius: 16,
     },
     title: {
       flex: 1,
@@ -91,8 +102,12 @@ const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
       marginRight: 12,
     },
     details: {
-      marginTop: 12,
       padding: 12,
+      borderColor: colors.border,
+      borderWidth: 1,
+      borderTopWidth: 0,
+      borderBottomLeftRadius: 16,
+      borderBottomRightRadius: 16,
     },
     note: {
       color: colors.text,

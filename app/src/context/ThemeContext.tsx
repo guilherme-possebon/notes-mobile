@@ -1,5 +1,3 @@
-// src/context/ThemeContext.tsx
-
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -44,19 +42,19 @@ const lightColors: ThemeColors = {
 };
 
 const darkColors: ThemeColors = {
-  text: "#6F3DE4",
+  text: "#7D57D0",
   placeholder: "#A29EA8",
   background: "#121212",
   primary: "#361E6E",
   secondary: "#2D195C",
-  border: "#44258B",
-  cardBackground: "#1a1a1a",
+  border: "#6F3DE4",
+  cardBackground: "#1A1A1A",
   link: "#8AB4F8",
-  error: "#D32F2F",
-  success: "#4CAF50",
-  danger: "#D32F2F",
-  divider: "#402484",
-  toastText: "#FFF",
+  error: "#EF5350",
+  success: "#66BB6A",
+  danger: "#EF5350",
+  divider: "#4D2D9D",
+  toastText: "#FFFFFF",
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
