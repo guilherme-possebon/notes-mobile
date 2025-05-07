@@ -1,17 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { FlatList, View } from "react-native";
+import { FlatList } from "react-native";
 import axios from "axios";
-import ThemedSafeAreaView from "./src/components/ThemedSafeAreaView";
-import ThemedText from "./src/components/ThemedText";
+import ThemedSafeAreaView from "../src/components/ThemedSafeAreaView";
+import ThemedText from "../src/components/ThemedText";
 import { IWeeks } from "../types/weeks";
-import { useTheme } from "./src/context/ThemeContext";
-import ThemedView from "./src/components/ThemedView";
-import ThemedTouchableOpacity from "./src/components/ThemedTouchableOpacity";
+import { useTheme } from "../src/context/ThemeContext";
+import ThemedView from "../src/components/ThemedView";
+import ThemedTouchableOpacity from "../src/components/ThemedTouchableOpacity";
 import { format } from "date-fns";
 import { IWeek } from "../types/week";
-import WeekModal from "./src/components/WeekModal";
-import { useLoading } from "./src/context/LoadingContext";
+import WeekModal from "../src/components/WeekModal";
+import { useLoading } from "../src/context/LoadingContext";
 
 const API_URL = "https://project-api-woad.vercel.app";
 

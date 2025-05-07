@@ -1,40 +1,36 @@
 import React from "react";
-import { IWeek } from "../../../types/week";
 import { useTheme } from "../context/ThemeContext";
-import CurrentWeekFlatList from "./CurrentWeekFlatList";
 import { Dimensions, Modal, StyleSheet } from "react-native";
 import ThemedView from "./ThemedView";
-import Icon from "./Icon";
 import ThemedTouchableOpacity from "./ThemedTouchableOpacity";
+import Icon from "./Icon";
 
-interface IWeekModal extends IWeek {
+interface IModal {
+  children: React.ReactNode;
   hideModal: () => void;
   modalVisible: boolean;
+  animationType: "fade" | "slide" | "none";
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-export default function WeekModal({
-  id,
-  notes,
-  start_date,
-  end_date,
+export default function ModalTemplate({
+  children,
   hideModal,
   modalVisible,
-}: IWeekModal) {
+  animationType,
+}: IModal) {
   const { colors } = useTheme();
   const styles = getStyles(colors);
 
   return (
     <>
       <Modal
-        animationType="fade"
+        animationType={animationType}
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          hideModal();
-        }}
+        onRequestClose={hideModal}
       >
         <ThemedView style={[styles.centeredView]}>
           <ThemedView style={styles.modalView}>
@@ -44,7 +40,7 @@ export default function WeekModal({
             >
               <Icon name={"remove"} color={colors.text} size={24} />
             </ThemedTouchableOpacity>
-            <CurrentWeekFlatList notes={notes} />
+            {children}
           </ThemedView>
         </ThemedView>
       </Modal>

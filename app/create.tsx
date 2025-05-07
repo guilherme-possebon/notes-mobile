@@ -1,21 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
-import ThemedSafeAreaView from "./src/components/ThemedSafeAreaView";
-import ThemedText from "./src/components/ThemedText";
-import ThemedInput from "./src/components/ThemedInput";
-import ThemedTouchableOpacity from "./src/components/ThemedTouchableOpacity";
-import Icon from "./src/components/Icon";
-import ThemedView from "./src/components/ThemedView";
+import React, { useRef, useState } from "react";
+import ThemedSafeAreaView from "../src/components/ThemedSafeAreaView";
+import ThemedText from "../src/components/ThemedText";
+import ThemedInput from "../src/components/ThemedInput";
+import ThemedTouchableOpacity from "../src/components/ThemedTouchableOpacity";
+import Icon from "../src/components/Icon";
+import ThemedView from "../src/components/ThemedView";
 import { Button, StyleSheet, TextInput } from "react-native";
 import axios from "axios";
-import { useLoading } from "./src/context/LoadingContext";
+import { useLoading } from "../src/context/LoadingContext";
 import { Toast } from "toastify-react-native";
-import { useTheme } from "./src/context/ThemeContext";
+import { useTheme } from "../src/context/ThemeContext";
 
 var API_URL = "https://project-api-woad.vercel.app";
 
 export default function Create() {
   const { showLoading, hideLoading, setReload, reload } = useLoading();
-  const { colors, setTheme } = useTheme();
+  const { colors } = useTheme();
   const [dayNote, setDayNote] = useState({
     title: "",
     note: "",
@@ -151,7 +151,9 @@ export default function Create() {
               : colors.border
           }
         >
-          <ThemedView style={{ flexDirection: "row", gap: 8 }}>
+          <ThemedView
+            style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
+          >
             <Icon
               name={"floppy-o"}
               color={

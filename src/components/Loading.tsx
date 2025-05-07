@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import LottieView from "lottie-react-native";
-import LoadingAnimation from "../../../assets/animations/loading.json";
+import LoadingAnimation from "../../assets/animations/loading.json";
 import { useTheme } from "../context/ThemeContext";
 
 interface LoadingProps {

@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { IWeek } from "../types/week";
-import { useLoading } from "./src/context/LoadingContext";
+import { useLoading } from "../src/context/LoadingContext";
 import { INote } from "../types/note";
-import ThemedSafeAreaView from "./src/components/ThemedSafeAreaView";
-import ThemedView from "./src/components/ThemedView";
-import ThemedText from "./src/components/ThemedText";
-import ThemedTouchableOpacity from "./src/components/ThemedTouchableOpacity";
-import Icon from "./src/components/Icon";
-import { useTheme } from "./src/context/ThemeContext";
-import CurrentWeekFlatList from "./src/components/CurrentWeekFlatList";
+import ThemedSafeAreaView from "../src/components/ThemedSafeAreaView";
+import ThemedView from "../src/components/ThemedView";
+import ThemedText from "../src/components/ThemedText";
+import ThemedTouchableOpacity from "../src/components/ThemedTouchableOpacity";
+import Icon from "../src/components/Icon";
+import { useTheme } from "../src/context/ThemeContext";
+import CurrentWeekFlatList from "../src/components/CurrentWeekFlatList";
 
 const API_URL = "https://project-api-woad.vercel.app";
 

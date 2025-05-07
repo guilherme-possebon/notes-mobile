@@ -1,11 +1,11 @@
 import React from "react";
-import { GroupedNote } from "../..";
+import { GroupedNote } from "../../app";
 import ThemedView from "./ThemedView";
 import ThemedText from "./ThemedText";
-import { FlatList, StyleSheet } from "react-native";
+import { Dimensions, FlatList, StyleSheet } from "react-native";
 import Details from "./Details";
 import { useTheme } from "../context/ThemeContext";
-import { ICurrentWeek } from "../../../types/currentWeek";
+import { ICurrentWeek } from "../../types/currentWeek";
 
 export default function CurrentWeekFlatList({ notes }: ICurrentWeek) {
   const { colors } = useTheme();

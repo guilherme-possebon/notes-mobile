@@ -1,15 +1,15 @@
 import React from "react";
-import Loading from "./src/components/Loading";
-import { LoadingProvider, useLoading } from "./src/context/LoadingContext";
-import AppTabs from "./src/components/AppTabs";
-import ThemedSafeAreaView from "./src/components/ThemedSafeAreaView";
+import Loading from "../src/components/Loading";
+import { LoadingProvider, useLoading } from "../src/context/LoadingContext";
+import AppTabs from "../src/components/AppTabs";
+import ThemedSafeAreaView from "../src/components/ThemedSafeAreaView";
 import ToastManager from "toastify-react-native";
 import { StatusBar } from "expo-status-bar";
-import { ThemeProvider, useTheme } from "./src/context/ThemeContext";
-import ThemedView from "./src/components/ThemedView";
-import ThemedText from "./src/components/ThemedText";
-import Icon from "./src/components/Icon";
-import ThemedTouchableOpacity from "./src/components/ThemedTouchableOpacity";
+import { ThemeProvider, useTheme } from "../src/context/ThemeContext";
+import ThemedView from "../src/components/ThemedView";
+import ThemedText from "../src/components/ThemedText";
+import Icon from "../src/components/Icon";
+import ThemedTouchableOpacity from "../src/components/ThemedTouchableOpacity";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface IToastConfig {

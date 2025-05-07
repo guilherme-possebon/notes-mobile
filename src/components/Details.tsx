@@ -11,13 +11,15 @@ import {
 import ThemedView from "./ThemedView";
 import ThemedText from "./ThemedText";
 import Icon from "./Icon";
-import { INote } from "../../../types/note";
+import { INote } from "../../types/note";
 import { useTheme } from "../context/ThemeContext";
+import OptionsModal from "./OptionsModal";
 
-export default function Details({ title, note, created_at }: INote) {
+export default function Details({ title, note, created_at, id }: INote) {
   const { colors } = useTheme();
-  const styles = getStyles(colors);
   const [isVisible, setIsVisible] = useState(false);
+  const [optionsVisible, setOptionsVisible] = useState(false);
+  const styles = getStyles(colors);
   const rotation = useRef(new Animated.Value(0)).current;
 
   const toggleDetails = () => {
@@ -35,33 +37,47 @@ export default function Details({ title, note, created_at }: INote) {
     setIsVisible(!isVisible);
   };
 
+  function showOptionsModal() {
+    setOptionsVisible(true);
+  }
+
+  function closeOptionsModal() {
+    setOptionsVisible(false);
+  }
+
   const rotateInterpolate = rotation.interpolate({
     inputRange: [0, 1],
     outputRange: ["0deg", "180deg"],
   });
 
   return (
-    <ThemedView style={styles.container}>
-      <TouchableOpacity
-        onPress={toggleDetails}
-        style={[
-          styles.header,
-          {
-            borderBottomLeftRadius: isVisible ? 0 : 16,
-            borderBottomRightRadius: isVisible ? 0 : 16,
-            borderBottomWidth: isVisible ? StyleSheet.hairlineWidth : 1,
-          },
-        ]}
-      >
-        <ThemedText type="subtitle" style={styles.title}>
-          {title}
-        </ThemedText>
-        <Animated.View style={{ transform: [{ rotate: rotateInterpolate }] }}>
-          <ThemedText>
-            <Icon name="chevron-down" color={colors.border} size={20} />
+    <TouchableOpacity
+      style={styles.container}
+      onLongPress={showOptionsModal}
+      onPress={toggleDetails}
+      activeOpacity={0.8}
+    >
+      <ThemedView>
+        <ThemedView
+          style={[
+            styles.header,
+            {
+              borderBottomLeftRadius: isVisible ? 0 : 16,
+              borderBottomRightRadius: isVisible ? 0 : 16,
+              borderBottomWidth: isVisible ? StyleSheet.hairlineWidth : 1,
+            },
+          ]}
+        >
+          <ThemedText type="subtitle" style={styles.title}>
+            {title}
           </ThemedText>
-        </Animated.View>
-      </TouchableOpacity>
+          <Animated.View style={{ transform: [{ rotate: rotateInterpolate }] }}>
+            <ThemedText>
+              <Icon name="chevron-down" color={colors.border} size={20} />
+            </ThemedText>
+          </Animated.View>
+        </ThemedView>
+      </ThemedView>
 
       {isVisible && (
         <ThemedView style={styles.details}>
@@ -70,7 +86,15 @@ export default function Details({ title, note, created_at }: INote) {
           </ThemedText>
         </ThemedView>
       )}
-    </ThemedView>
+
+      <OptionsModal
+        visible={optionsVisible}
+        onClose={closeOptionsModal}
+        id={id}
+        note={note}
+        title={title}
+      />
+    </TouchableOpacity>
   );
 }
 

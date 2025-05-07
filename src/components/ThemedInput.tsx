@@ -37,7 +37,7 @@ const ThemedInput = React.forwardRef<TextInput, ThemedInputProps>(
     const [isFocused, setIsFocused] = useState(false);
     const errorOpacity = useRef(new Animated.Value(0)).current;
     const animatedLabel = useRef(new Animated.Value(value ? 1 : 0)).current;
-    const MAX_HEIGHT = 200;
+    const MAX_HEIGHT = 400;
 
     const isInvalid = showValidation && value.trim().length === 0;
 
