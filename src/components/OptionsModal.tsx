@@ -164,7 +164,7 @@ export default function OptionsModal({
             showValidation={notesAlerts.noteAlert}
           />
           <ThemedTouchableOpacity
-            onPress={() => console.log(12312312)}
+            onPress={() => saveNotes()}
             borderStyle={
               notesAlerts.noteAlert || notesAlerts.titleAlert
                 ? colors.error
