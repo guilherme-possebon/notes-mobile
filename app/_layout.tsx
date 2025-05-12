@@ -11,6 +11,7 @@ import ThemedText from "../src/components/ThemedText";
 import Icon from "../src/components/Icon";
 import ThemedTouchableOpacity from "../src/components/ThemedTouchableOpacity";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import OptionsProvider from "../src/context/OptionsContext";
 
 interface IToastConfig {
   text1: string;
@@ -133,7 +134,7 @@ const LayoutContent = () => {
             containerStyle={{
               padding: 2,
             }}
-            borderStyle={colors.toastText}
+            borderColor={colors.toastText}
             contentStyle={{
               flexDirection: "row",
               justifyContent: "flex-start",
@@ -148,7 +149,7 @@ const LayoutContent = () => {
             containerStyle={{
               padding: 2,
             }}
-            borderStyle={colors.toastText}
+            borderColor={colors.toastText}
             contentStyle={{
               flexDirection: "row",
               justifyContent: "flex-start",
@@ -169,9 +170,11 @@ const LayoutContent = () => {
 export default function Layout() {
   return (
     <LoadingProvider>
-      <ThemeProvider>
-        <LayoutContent />
-      </ThemeProvider>
+      <OptionsProvider>
+        <ThemeProvider>
+          <LayoutContent />
+        </ThemeProvider>
+      </OptionsProvider>
     </LoadingProvider>
   );
 }

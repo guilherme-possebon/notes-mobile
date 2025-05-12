@@ -9,22 +9,24 @@ export type ThemedTextProps = TextProps & {
     | "subtitle"
     | "link"
     | "small"
-    | "smallSemiBold";
+    | "smallSemiBold"
+    | "smallTitle";
+  color?: string;
 };
 
 export default function ThemedText({
   style,
   type = "default",
+  color,
   ...rest
 }: ThemedTextProps) {
   const { colors } = useTheme();
-  const color = colors.text;
   const styles = getStyles(colors);
 
   return (
     <Text
       style={[
-        { color },
+        { color: color ? color : colors.text },
         type === "default" ? styles.default : undefined,
         type === "title" ? styles.title : undefined,
         type === "defaultSemiBold" ? styles.defaultSemiBold : undefined,
@@ -32,6 +34,7 @@ export default function ThemedText({
         type === "link" ? styles.link : undefined,
         type === "small" ? styles.small : undefined,
         type === "smallSemiBold" ? styles.smallSemiBold : undefined,
+        type === "smallTitle" ? styles.smallTitle : undefined,
 
         style,
       ]}
@@ -56,6 +59,11 @@ const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
       fontWeight: "bold",
       lineHeight: 32,
     },
+    smallTitle: {
+      fontSize: 26,
+      fontWeight: "bold",
+      lineHeight: 26,
+    },
     subtitle: {
       fontSize: 20,
       fontWeight: "semibold",
@@ -63,7 +71,6 @@ const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
     link: {
       lineHeight: 30,
       fontSize: 16,
-      color: colors.link,
     },
     small: {
       fontSize: 12,

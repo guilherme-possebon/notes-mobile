@@ -135,7 +135,7 @@ const CustomTabBar = ({ state, navigation, tabs }: CustomTabBarProps) => {
           const onPress = () => {
             const event = navigation.emit({
               type: "tabPress",
-              target: route?.key || tab.name,
+              target: route?.key,
               canPreventDefault: true,
             });
 
@@ -223,8 +223,9 @@ export default function AppTabs({ tabs, initialRouteName }: AppTabsProps) {
         headerShown: false,
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.text,
+        tabBarHideOnKeyboard: true,
       }}
-      initialRouteName={initialRouteName || tabs[0]?.name}
+      initialRouteName={initialRouteName}
       tabBar={(props) => <CustomTabBar {...props} tabs={tabs} />}
     >
       {tabs.map((tab) => (

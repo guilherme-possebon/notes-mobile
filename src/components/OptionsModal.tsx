@@ -165,7 +165,7 @@ export default function OptionsModal({
           />
           <ThemedTouchableOpacity
             onPress={() => saveNotes()}
-            borderStyle={
+            borderColor={
               notesAlerts.noteAlert || notesAlerts.titleAlert
                 ? colors.error
                 : colors.border

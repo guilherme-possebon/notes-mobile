@@ -5,19 +5,18 @@ import {
   ViewStyle,
   Animated,
 } from "react-native";
-import ThemedText, { ThemedTextProps } from "./ThemedText";
 import ThemedView from "./ThemedView";
 import { useTheme } from "../context/ThemeContext";
-import Icon from "./Icon";
 
 interface TabItemProps {
   onPress: () => void;
   showValidation?: boolean;
   children: React.ReactNode;
   containerStyle?: ViewStyle;
-  borderStyle?: string;
+  borderColor?: string;
   contentStyle?: ViewStyle;
   isDisabled?: boolean;
+  backgroundColor?: string;
 }
 
 export default function ThemedTouchableOpacity({
@@ -25,9 +24,10 @@ export default function ThemedTouchableOpacity({
   showValidation = false,
   children,
   containerStyle,
-  borderStyle,
+  borderColor,
   contentStyle,
   isDisabled = false,
+  backgroundColor,
 }: TabItemProps) {
   const errorOpacity = useRef(new Animated.Value(0)).current;
   const { colors } = useTheme();
@@ -44,7 +44,12 @@ export default function ThemedTouchableOpacity({
     <TouchableOpacity
       style={[
         containerStyle ? containerStyle : styles.container,
-        { borderColor: borderStyle },
+        {
+          borderColor: borderColor,
+          backgroundColor: backgroundColor
+            ? backgroundColor
+            : colors.background,
+        },
       ]}
       onPress={onPress}
       activeOpacity={0.7}
@@ -64,7 +69,6 @@ const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
       paddingVertical: 16,
       paddingHorizontal: 32,
       borderRadius: 12,
-      backgroundColor: colors.background,
       borderWidth: 1,
       borderColor: colors.border,
     },

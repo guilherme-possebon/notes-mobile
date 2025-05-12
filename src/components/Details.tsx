@@ -5,22 +5,29 @@ import {
   Animated,
   Easing,
   LayoutAnimation,
-  Platform,
-  UIManager,
 } from "react-native";
 import ThemedView from "./ThemedView";
 import ThemedText from "./ThemedText";
 import Icon from "./Icon";
 import { INote } from "../../types/note";
 import { useTheme } from "../context/ThemeContext";
-import OptionsModal from "./OptionsModal";
+import { usePathname, useRouter } from "expo-router";
+import { useOptions } from "../context/OptionsContext";
 
-export default function Details({ title, note, created_at, id }: INote) {
+export default function Details({
+  title,
+  note,
+  created_at,
+  updated_at,
+  id,
+}: INote) {
   const { colors } = useTheme();
   const [isVisible, setIsVisible] = useState(false);
-  const [optionsVisible, setOptionsVisible] = useState(false);
   const styles = getStyles(colors);
   const rotation = useRef(new Animated.Value(0)).current;
+  const router = useRouter();
+  const { optionsInfo } = useOptions();
+  const pathname = usePathname();
 
   const toggleDetails = () => {
     const toValue = isVisible ? 0 : 1;
@@ -38,11 +45,8 @@ export default function Details({ title, note, created_at, id }: INote) {
   };
 
   function showOptionsModal() {
-    setOptionsVisible(true);
-  }
-
-  function closeOptionsModal() {
-    setOptionsVisible(false);
+    optionsInfo({ id, title, note, created_at, updated_at, pathname });
+    router.push("/options");
   }
 
   const rotateInterpolate = rotation.interpolate({
@@ -86,14 +90,6 @@ export default function Details({ title, note, created_at, id }: INote) {
           </ThemedText>
         </ThemedView>
       )}
-
-      <OptionsModal
-        visible={optionsVisible}
-        onClose={closeOptionsModal}
-        id={id}
-        note={note}
-        title={title}
-      />
     </TouchableOpacity>
   );
 }

@@ -63,7 +63,7 @@ export default function Month() {
   const renderWeek = ({ item }: { item: IWeeks }) => (
     <ThemedTouchableOpacity
       onPress={() => getWeekById(item.id)}
-      borderStyle={colors.border}
+      borderColor={colors.border}
       containerStyle={{
         paddingVertical: 16,
         paddingHorizontal: 32,

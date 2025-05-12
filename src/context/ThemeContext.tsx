@@ -17,6 +17,10 @@ interface ThemeColors {
   danger: string;
   divider: string;
   toastText: string;
+  white: string;
+  black: string;
+  themeColor: string;
+  gray: string;
 }
 
 interface ThemeContextType {
@@ -38,23 +42,31 @@ const lightColors: ThemeColors = {
   success: "#66BB6A",
   danger: "#F44336",
   divider: "#B0BEC5",
-  toastText: "#000",
+  toastText: "#000000",
+  white: "#FFFFFF",
+  black: "#000000",
+  themeColor: "#FFFFFF",
+  gray: "#7A7A7A",
 };
 
 const darkColors: ThemeColors = {
   text: "#7D57D0",
   placeholder: "#A29EA8",
   background: "#121212",
-  primary: "#361E6E",
+  primary: "#6A4BC7",
   secondary: "#2D195C",
   border: "#6F3DE4",
   cardBackground: "#1A1A1A",
   link: "#8AB4F8",
   error: "#EF5350",
   success: "#66BB6A",
-  danger: "#EF5350",
+  danger: "#F44336",
   divider: "#4D2D9D",
   toastText: "#FFFFFF",
+  white: "#FFFFFF",
+  black: "#000000",
+  themeColor: "#000000",
+  gray: "#7A7A7A",
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);

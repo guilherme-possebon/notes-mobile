@@ -45,7 +45,7 @@ export default function Week() {
     <ThemedSafeAreaView
       style={{ paddingBottom: 64, backgroundColor: colors.background, flex: 1 }}
     >
-      {weekNote.notes ? (
+      {weekNote?.notes ? (
         <>
           <ThemedText type="title" style={[styles.title]}>
             Semana Atual
@@ -58,7 +58,7 @@ export default function Week() {
           <ThemedText type="subtitle">Tente começar criando uma!</ThemedText>
           <ThemedTouchableOpacity
             onPress={() => router.navigate("/create")}
-            borderStyle={colors.border}
+            borderColor={colors.border}
           >
             <ThemedView style={{ flexDirection: "row", gap: 8 }}>
               <Icon name="pencil" size={24} color={colors.text} />
