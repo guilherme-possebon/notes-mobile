@@ -7,6 +7,7 @@ import Icon from "../../src/components/Icon";
 import ThemedSafeAreaView from "../../src/components/ThemedSafeAreaView";
 import {
   useFocusEffect,
+  useLocalSearchParams,
   useNavigation,
   usePathname,
   useRouter,
@@ -29,10 +30,36 @@ export default function Options() {
   });
   const { options } = useOptions();
 
-  function goBack() {
-    setOptionsButton(() => ({ edit: false, delete: false }));
+  const goBack = useCallback(() => {
+    setOptionsButton({ edit: false, delete: false });
     router.replace(options?.pathname);
-  }
+  }, [router, options]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        goBack();
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress
+      );
+
+      return () => subscription.remove();
+    }, [goBack])
+  );
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      e.preventDefault();
+
+      goBack();
+    });
+
+    return unsubscribe;
+  }, [navigation, goBack]);
 
   function editOption() {
     setOptionsButton(() => ({ edit: true, delete: false }));
@@ -45,34 +72,6 @@ export default function Options() {
   function cancelOption() {
     goBack();
   }
-
-  useEffect(
-    () =>
-      navigation.addListener("beforeRemove", (e) => {
-        e.preventDefault();
-
-        goBack();
-      }),
-    [navigation, router]
-  );
-
-  useFocusEffect(
-    useCallback(() => {
-      const onBackPress = () => {
-        goBack();
-        return true;
-      };
-
-      const subscription = BackHandler.addEventListener(
-        "hardwareBackPress",
-        onBackPress
-      ) as unknown as { remove(): void };
-
-      return () => {
-        subscription.remove();
-      };
-    }, [router])
-  );
 
   return (
     <>
@@ -137,7 +136,7 @@ export default function Options() {
               <ThemedView style={styles.buttonStyle}>
                 <Icon name={"remove"} size={24} color={colors.themeColor} />
                 <ThemedText color={colors.themeColor} type="defaultSemiBold">
-                  Cacelar
+                  Cancelar {/* Fixed typo from "Cacelar" */}
                 </ThemedText>
               </ThemedView>
             </ThemedTouchableOpacity>
