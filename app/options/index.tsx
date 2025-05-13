@@ -5,18 +5,14 @@ import ThemedView from "../../src/components/ThemedView";
 import ThemedText from "../../src/components/ThemedText";
 import Icon from "../../src/components/Icon";
 import ThemedSafeAreaView from "../../src/components/ThemedSafeAreaView";
-import {
-  useFocusEffect,
-  useLocalSearchParams,
-  useNavigation,
-  usePathname,
-  useRouter,
-  useSegments,
-} from "expo-router";
+import { useFocusEffect, useNavigation, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import ThemedTouchableOpacity from "../../src/components/ThemedTouchableOpacity";
 import { useOptions } from "../../src/context/OptionsContext";
-import Details from "../../src/components/Details";
+import { useOptionsButtons } from "../../src/context/OptionsButtonsContext";
+import OptionsToShow from "../../src/components/Options";
+import EditOption from "../../src/components/EditOption";
+import DeleteOption from "../../src/components/DeleteOption";
+import { useLoading } from "../../src/context/LoadingContext";
 
 export default function Options() {
   const { colors } = useTheme();
@@ -24,14 +20,17 @@ export default function Options() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const navigation = useNavigation();
-  const [optionsButton, setOptionsButton] = useState({
-    edit: false,
-    delete: false,
-  });
+  const { optionsButton, setOptionsButton } = useOptionsButtons();
   const { options } = useOptions();
+  const { triggerReload } = useLoading();
+
+  function hideModal() {
+    setOptionsButton((prev) => ({ ...prev, delete: false }));
+  }
 
   const goBack = useCallback(() => {
     setOptionsButton({ edit: false, delete: false });
+    triggerReload();
     router.replace(options?.pathname);
   }, [router, options]);
 
@@ -61,18 +60,6 @@ export default function Options() {
     return unsubscribe;
   }, [navigation, goBack]);
 
-  function editOption() {
-    setOptionsButton(() => ({ edit: true, delete: false }));
-  }
-
-  function deleteOption() {
-    setOptionsButton(() => ({ edit: false, delete: true }));
-  }
-
-  function cancelOption() {
-    goBack();
-  }
-
   return (
     <>
       <ThemedSafeAreaView style={styles.container}>
@@ -85,73 +72,24 @@ export default function Options() {
             <ThemedText type="link">Voltar</ThemedText>
           </ThemedView>
         </Pressable>
-        <ThemedView style={styles.optionContainer}>
-          <ThemedText type="smallTitle" style={styles.title}>
-            Clique na ação desejada
-          </ThemedText>
-          <Details
-            id={options.id}
-            title={options.title}
-            note={options.note}
-            created_at={options.created_at}
-            updated_at={options.updated_at}
-          />
-          <ThemedView style={styles.buttonContainer}>
-            {/* Editar */}
-            <ThemedTouchableOpacity
-              onPress={editOption}
-              borderColor={colors.primary}
-              backgroundColor={colors.primary}
-            >
-              <ThemedView style={styles.buttonStyle}>
-                <Icon
-                  name={"pencil-square-o"}
-                  size={24}
-                  color={colors.themeColor}
-                />
-                <ThemedText color={colors.themeColor} type="defaultSemiBold">
-                  Editar
-                </ThemedText>
-              </ThemedView>
-            </ThemedTouchableOpacity>
-            {/* Deletar */}
-            <ThemedTouchableOpacity
-              onPress={deleteOption}
-              borderColor={colors.danger}
-              backgroundColor={colors.danger}
-            >
-              <ThemedView style={styles.buttonStyle}>
-                <Icon name={"trash-o"} size={24} color={colors.themeColor} />
-                <ThemedText color={colors.themeColor} type="defaultSemiBold">
-                  Deletar
-                </ThemedText>
-              </ThemedView>
-            </ThemedTouchableOpacity>
-            {/* Cancelar */}
-            <ThemedTouchableOpacity
-              onPress={cancelOption}
-              borderColor={colors.gray}
-              backgroundColor={colors.gray}
-            >
-              <ThemedView style={styles.buttonStyle}>
-                <Icon name={"remove"} size={24} color={colors.themeColor} />
-                <ThemedText color={colors.themeColor} type="defaultSemiBold">
-                  Cancelar {/* Fixed typo from "Cacelar" */}
-                </ThemedText>
-              </ThemedView>
-            </ThemedTouchableOpacity>
-          </ThemedView>
-        </ThemedView>
+
         {optionsButton.edit && (
           <>
-            <ThemedText>Editar</ThemedText>
+            <EditOption goBack={goBack} />
           </>
         )}
         {optionsButton.delete && (
           <>
-            <ThemedText>Deletar</ThemedText>
+            <DeleteOption
+              id={options.id}
+              onClose={hideModal}
+              visible={optionsButton.delete}
+              goBack={goBack}
+            />
           </>
         )}
+
+        <OptionsToShow />
       </ThemedSafeAreaView>
     </>
   );

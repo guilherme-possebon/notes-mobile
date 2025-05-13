@@ -12,6 +12,7 @@ import Icon from "../src/components/Icon";
 import ThemedTouchableOpacity from "../src/components/ThemedTouchableOpacity";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import OptionsProvider from "../src/context/OptionsContext";
+import OptionsButtonsProvider from "../src/context/OptionsButtonsContext";
 
 interface IToastConfig {
   text1: string;
@@ -36,6 +37,7 @@ const LayoutContent = () => {
           shadowOffset: { width: 0, height: 2 },
           shadowRadius: 4,
           elevation: 4,
+          zIndex: 999,
         }}
       >
         <Icon name="check" color={colors.toastText} size={24} />
@@ -77,6 +79,7 @@ const LayoutContent = () => {
           shadowOffset: { width: 0, height: 2 },
           shadowRadius: 4,
           elevation: 4,
+          zIndex: 999,
         }}
       >
         <Icon name="remove" color={colors.toastText} size={24} />
@@ -162,7 +165,7 @@ const LayoutContent = () => {
       </ThemedView>
       <AppTabs tabs={tabs} initialRouteName="index" />
       {isLoading && <Loading />}
-      <ToastManager useModal={false} config={toastConfig} />
+      <ToastManager useModal={true} config={toastConfig} />
     </ThemedSafeAreaView>
   );
 };
@@ -171,9 +174,11 @@ export default function Layout() {
   return (
     <LoadingProvider>
       <OptionsProvider>
-        <ThemeProvider>
-          <LayoutContent />
-        </ThemeProvider>
+        <OptionsButtonsProvider>
+          <ThemeProvider>
+            <LayoutContent />
+          </ThemeProvider>
+        </OptionsButtonsProvider>
       </OptionsProvider>
     </LoadingProvider>
   );

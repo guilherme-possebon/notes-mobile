@@ -4,6 +4,8 @@ interface LoadingContextType {
   isLoading: boolean;
   showLoading: (text?: string) => void;
   hideLoading: () => void;
+  triggerReload: () => void;
+  resetReload: () => void;
   loadingText: string;
   setReload: React.Dispatch<React.SetStateAction<boolean>>;
   reload: boolean;
@@ -25,6 +27,14 @@ export const LoadingProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   };
 
+  function triggerReload() {
+    setReload(true);
+  }
+
+  function resetReload() {
+    setReload(false);
+  }
+
   return (
     <LoadingContext.Provider
       value={{
@@ -34,6 +44,8 @@ export const LoadingProvider = ({ children }: { children: ReactNode }) => {
         loadingText,
         reload,
         setReload,
+        resetReload,
+        triggerReload,
       }}
     >
       {children}

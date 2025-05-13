@@ -18,11 +18,7 @@ export default function WeekModal({
 }: IWeekModal) {
   return (
     <>
-      <ModalTemplate
-        animationType="fade"
-        hideModal={hideModal}
-        modalVisible={modalVisible}
-      >
+      <ModalTemplate hideModal={hideModal} modalVisible={modalVisible}>
         <CurrentWeekFlatList notes={notes} />
       </ModalTemplate>
     </>

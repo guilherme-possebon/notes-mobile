@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { FlatList } from "react-native";
 import axios from "axios";
@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { IWeek } from "../types/week";
 import WeekModal from "../src/components/WeekModal";
 import { useLoading } from "../src/context/LoadingContext";
+import { useFocusEffect } from "expo-router";
 
 const API_URL = "https://project-api-woad.vercel.app";
 
@@ -20,7 +21,8 @@ export default function Month() {
   const [week, setWeek] = useState<IWeek>({} as IWeek);
   const [modalVisible, setModalVisible] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const { showLoading, hideLoading } = useLoading();
+  const [selectedWeekId, setSelectedWeekId] = useState<number | null>(null);
+  const { showLoading, hideLoading, reload, resetReload } = useLoading();
 
   function showModal() {
     setModalVisible(true);
@@ -30,9 +32,24 @@ export default function Month() {
   function hideModal() {
     setModalVisible(false);
     setIsDisabled(false);
+    setSelectedWeekId(null);
   }
 
   const { colors } = useTheme();
+
+  function getWeekById(id: number) {
+    showLoading();
+    return axios
+      .get(`${API_URL}/api/notes/weeks/${id}`)
+      .then((response) => {
+        setWeek(response.data.week);
+        showModal();
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => hideLoading());
+  }
   useEffect(() => {
     showLoading();
     axios
@@ -46,23 +63,22 @@ export default function Month() {
       .finally(() => hideLoading());
   }, []);
 
-  async function getWeekById(id: number) {
-    showLoading();
-    axios
-      .get(`${API_URL}/api/notes/weeks/${id}`)
-      .then((response) => {
-        hideLoading();
-        setWeek(response.data.week);
-        showModal();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
+  useFocusEffect(
+    useCallback(() => {
+      if (selectedWeekId !== null && reload) {
+        getWeekById(selectedWeekId).finally(() => {
+          resetReload(); // ← Adiciona isso aqui
+        });
+      }
+    }, [reload, selectedWeekId])
+  );
 
   const renderWeek = ({ item }: { item: IWeeks }) => (
     <ThemedTouchableOpacity
-      onPress={() => getWeekById(item.id)}
+      onPress={() => {
+        setSelectedWeekId(item.id);
+        getWeekById(item.id);
+      }}
       borderColor={colors.border}
       containerStyle={{
         paddingVertical: 16,

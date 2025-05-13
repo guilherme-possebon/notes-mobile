@@ -10,18 +10,18 @@ import { useLoading } from "../context/LoadingContext";
 import axios from "axios";
 import { useTheme } from "../context/ThemeContext";
 import { useOptions } from "../context/OptionsContext";
+import { useOptionsButtons } from "../context/OptionsButtonsContext";
 
 interface IEditOption {
-  id: number;
-  note: string;
-  title: string;
+  goBack: () => void;
 }
 
 var API_URL = "https://project-api-woad.vercel.app";
-export default function EditOption() {
+export default function EditOption({ goBack }: IEditOption) {
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const { options } = useOptions();
+  const { setOptionsButton } = useOptionsButtons();
   const { showLoading, hideLoading, setReload, reload } = useLoading();
   const [updatedNote, setUpdatedNote] = useState({
     note: options.note,
@@ -64,6 +64,10 @@ export default function EditOption() {
     return !hasError;
   }
 
+  function cancelOption() {
+    setOptionsButton(() => ({ edit: false, delete: false }));
+  }
+
   function saveNotes() {
     if (!validateFields()) {
       Toast.show({
@@ -93,10 +97,10 @@ export default function EditOption() {
             text1: "Sucesso",
             text2: "Anotação editada com sucesso!",
             position: "top",
-            visibilityTime: 2000,
+            visibilityTime: 1000,
             autoHide: true,
           });
-
+          goBack();
           setReload(!reload);
         }
         hideLoading();
@@ -137,6 +141,8 @@ export default function EditOption() {
         value={updatedNote.title}
         onChangeText={handleTitleChange}
         showValidation={notesAlerts.titleAlert}
+        isMultiline={true}
+        numberOfLines={8}
       />
       <ThemedInput
         ref={noteInputRef}
@@ -144,44 +150,95 @@ export default function EditOption() {
         value={updatedNote.note}
         onChangeText={handleNoteChange}
         isMultiline={true}
-        numberOfLines={4}
+        numberOfLines={8}
         showValidation={notesAlerts.noteAlert}
       />
-      <ThemedTouchableOpacity
-        onPress={() => saveNotes()}
-        borderColor={
-          notesAlerts.noteAlert || notesAlerts.titleAlert
-            ? colors.error
-            : colors.border
-        }
-      >
-        <ThemedView
-          style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
+      <ThemedView style={[styles.buttonsContainer]}>
+        <ThemedTouchableOpacity
+          onPress={() => saveNotes()}
+          borderColor={
+            notesAlerts.noteAlert || notesAlerts.titleAlert
+              ? colors.error
+              : colors.border
+          }
+          contentStyle={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            width: 90,
+          }}
         >
-          <Icon
-            name={"floppy-o"}
-            color={
-              notesAlerts.noteAlert || notesAlerts.titleAlert
-                ? colors.error
-                : colors.text
-            }
-            size={24}
-          />
-          <ThemedText
-            type="subtitle"
-            style={[
-              {
-                color:
-                  notesAlerts.noteAlert || notesAlerts.titleAlert
-                    ? colors.error
-                    : colors.text,
-              },
-            ]}
+          <ThemedView
+            style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
           >
-            Salvar
-          </ThemedText>
-        </ThemedView>
-      </ThemedTouchableOpacity>
+            <Icon
+              name={"floppy-o"}
+              color={
+                notesAlerts.noteAlert || notesAlerts.titleAlert
+                  ? colors.error
+                  : colors.text
+              }
+              size={24}
+            />
+            <ThemedText
+              type="defaultSemiBold"
+              style={[
+                {
+                  color:
+                    notesAlerts.noteAlert || notesAlerts.titleAlert
+                      ? colors.error
+                      : colors.text,
+                },
+              ]}
+            >
+              Salvar
+            </ThemedText>
+          </ThemedView>
+        </ThemedTouchableOpacity>
+        <ThemedTouchableOpacity
+          onPress={cancelOption}
+          borderColor={
+            notesAlerts.noteAlert || notesAlerts.titleAlert
+              ? colors.error
+              : colors.border
+          }
+          contentStyle={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            width: 90,
+          }}
+        >
+          <ThemedView
+            style={{ flexDirection: "row", gap: 8, alignItems: "center" }}
+          >
+            <Icon
+              name={"remove"}
+              color={
+                notesAlerts.noteAlert || notesAlerts.titleAlert
+                  ? colors.error
+                  : colors.text
+              }
+              size={24}
+            />
+            <ThemedText
+              type="defaultSemiBold"
+              style={[
+                {
+                  color:
+                    notesAlerts.noteAlert || notesAlerts.titleAlert
+                      ? colors.error
+                      : colors.text,
+                },
+              ]}
+            >
+              Cancelar
+            </ThemedText>
+          </ThemedView>
+        </ThemedTouchableOpacity>
+      </ThemedView>
     </>
   );
 }
@@ -203,6 +260,12 @@ const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
+      gap: 8,
+    },
+    buttonsContainer: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      flexWrap: "wrap",
       gap: 8,
     },
   });

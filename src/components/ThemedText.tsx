@@ -60,9 +60,8 @@ const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
       lineHeight: 32,
     },
     smallTitle: {
-      fontSize: 26,
+      fontSize: 24,
       fontWeight: "bold",
-      lineHeight: 26,
     },
     subtitle: {
       fontSize: 20,

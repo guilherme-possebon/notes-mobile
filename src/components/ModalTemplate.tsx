@@ -1,7 +1,12 @@
 import React from "react";
+import {
+  Dimensions,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
+import Modal from "react-native-modal";
 import { useTheme } from "../context/ThemeContext";
-import { Dimensions, Modal, StyleSheet } from "react-native";
-import ThemedView from "./ThemedView";
 import ThemedTouchableOpacity from "./ThemedTouchableOpacity";
 import Icon from "./Icon";
 
@@ -9,7 +14,7 @@ interface IModal {
   children: React.ReactNode;
   hideModal: () => void;
   modalVisible: boolean;
-  animationType: "fade" | "slide" | "none";
+  hightValueToReduce?: number;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -19,38 +24,52 @@ export default function ModalTemplate({
   children,
   hideModal,
   modalVisible,
-  animationType,
+  hightValueToReduce,
 }: IModal) {
   const { colors } = useTheme();
   const styles = getStyles(colors);
 
   return (
-    <>
-      <Modal
-        animationType={animationType}
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={hideModal}
-      >
-        <ThemedView style={[styles.centeredView]}>
-          <ThemedView style={styles.modalView}>
-            <ThemedTouchableOpacity
-              containerStyle={styles.icon}
-              onPress={() => hideModal()}
+    <Modal
+      isVisible={modalVisible}
+      hasBackdrop={false}
+      animationIn={"zoomIn"}
+      onBackdropPress={hideModal}
+      onSwipeComplete={hideModal}
+      swipeDirection="down"
+    >
+      <TouchableWithoutFeedback>
+        <View style={styles.backdrop}>
+          <TouchableWithoutFeedback>
+            <View
+              style={[
+                styles.modalView,
+                {
+                  width: SCREEN_WIDTH - 20,
+                  height: hightValueToReduce
+                    ? SCREEN_HEIGHT - hightValueToReduce
+                    : SCREEN_HEIGHT,
+                },
+              ]}
             >
-              <Icon name={"remove"} color={colors.text} size={24} />
-            </ThemedTouchableOpacity>
-            {children}
-          </ThemedView>
-        </ThemedView>
-      </Modal>
-    </>
+              <ThemedTouchableOpacity
+                containerStyle={styles.icon}
+                onPress={hideModal}
+              >
+                <Icon name={"remove"} color={colors.text} size={24} />
+              </ThemedTouchableOpacity>
+              {children}
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </Modal>
   );
 }
 
 const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
   StyleSheet.create({
-    centeredView: {
+    backdrop: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
@@ -67,8 +86,6 @@ const getStyles = (colors: ReturnType<typeof useTheme>["colors"]) =>
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5,
-      width: SCREEN_WIDTH - 20,
-      height: SCREEN_HEIGHT,
     },
     icon: {
       position: "absolute",

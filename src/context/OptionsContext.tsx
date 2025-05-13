@@ -30,7 +30,6 @@ export const OptionsProvider = ({ children }: { children: ReactNode }) => {
     updated_at,
     pathname,
   }: IOptions) {
-    console.log("pathname: ", pathname);
     setOptions(() => ({
       id: id,
       title: title,
