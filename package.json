@@ -25,14 +25,23 @@
     "expo-splash-screen": "~0.30.8",
     "expo-status-bar": "~2.2.3",
     "expo-system-ui": "~5.0.7",
+<<<<<<< Updated upstream
     "expo-updates": "~0.28.12",
+=======
+    "expo-updates": "~0.28.17",
+>>>>>>> Stashed changes
     "lottie-react-native": "7.2.2",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.2",
+<<<<<<< Updated upstream
     "react-native-modal": "^14.0.0-rc.1",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
+=======
+    "react-native-safe-area-context": "^5.4.0",
+    "react-native-vector-icons": "^10.2.0",
+>>>>>>> Stashed changes
     "toastify-react-native": "^7.2.0"
   },
   "devDependencies": {
